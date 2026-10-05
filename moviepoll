@@ -1,0 +1,44 @@
+from flask import Flask, request, redirect, render_template
+import json
+import os
+
+app = Flask(__name__)
+
+DATA_FILE = "movies.json"
+
+def load_data():
+    if not os.path.exists(DATA_FILE):
+        return {"movies": {}}
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
+
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+@app.route("/")
+def index():
+    data = load_data()
+    return render_template("index.html", movies=data["movies"])
+
+@app.route("/nominate", methods=["POST"])
+def nominate():
+    title = request.form.get("title")
+    if not title:
+        return redirect("/")
+    data = load_data()
+    data["movies"].setdefault(title, 0)
+    save_data(data)
+    return redirect("/")
+
+@app.route("/vote", methods=["POST"])
+def vote():
+    title = request.form.get("title")
+    data = load_data()
+    if title in data["movies"]:
+        data["movies"][title] += 1
+    save_data(data)
+    return redirect("/")
+
+if __name__ == "__main__":
+    app.run(debug=True)
