@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Night</title>
+</head>
+<body>
+    <h1>Movie Night 🎬</h1>
 
+    <h2>Nominate a Movie</h2>
+    <form action="/nominate" method="POST">
+        <input type="text" name="title" placeholder="Movie title" required>
+        <button type="submit">Nominate</button>
+    </form>
+
+    <h2>Vote on Movies</h2>
+    <form action="/vote" method="POST">
+        <select name="title">
+            {% for title, votes in movies.items() %}
+                <option value="{{ title }}">{{ title }} ({{ votes }} votes)</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Vote</button>
+    </form>
+
+    <h2>Current Results</h2>
+    <ul>
+        {% for title, votes in movies.items() %}
+            <li>{{ title }} — {{ votes }} votes</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
